@@ -1,28 +1,36 @@
-# -- coding: utf-8 --
-"""
-Created on Wed Aug  9 09:00:02 2023
+import numpy as np 
+import pandas as pd
 
-@author: GEOMOL GEORGE
-"""
+data = pd.read_csv('C:/Users/kumar/OneDrive/Documents\YADURAJ (ML)/enjoysport.csv')
+concepts = np.array(data.iloc[:,0:-1])
+print("\nInstances are:\n",concepts)
+target = np.array(data.iloc[:,-1])
+print("\nTarget Values are: ",target)
 
-import csv
-a = []
-with open('enjoysport.csv', 'r') as csvfile:
-    for row in csv.reader(csvfile):
-        a.append(row)
-    print(a)
-print("\n The total number of training instances are : ",len(a))
-num_attribute = len(a[0])-1
-print("\n The initial hypothesis is : ")
-hypothesis = ['0']*num_attribute
-print(hypothesis)
-for i in range(0, len(a)):
- if a[i][num_attribute] == 'yes':
-  for j in range(0, num_attribute):
-      if hypothesis[j] == '0' or hypothesis[j] == a[i][j]:
-          hypothesis[j] = a[i][j]
-      else:
-          hypothesis[j] = '?'
- print("\n The hypothesis for the training instance {} is :\n" .format(i+1),hypothesis)
-print("\n The Maximally specific hypothesis for the training instance is ")
-print(hypothesis)
+def learn(concepts, target): 
+    specific_h = concepts[0].copy()
+    print("\nInitialization of specific_h and genearal_h")
+    print("\nSpecific Boundary: ", specific_h)
+    general_h = [["?" for i in range(len(specific_h))] for i in range(len(specific_h))]
+    print("\nGeneric Boundary: ",general_h)  
+
+    for i, h in enumerate(concepts):
+        print("\nInstance", i+1 , "is ", h)
+        if target[i] == "yes":
+            print("Instance is Positive ")
+            for x in range(len(specific_h)): 
+                if h[x]!= specific_h[x]:                    
+                    specific_h[x] ='?'                     
+                    general_h[x][x] ='?'
+                   
+        if target[i] == "no":            
+            print("Instance is Negative ")
+            for x in range(len(specific_h)): 
+                if h[x]!= specific_h[x]:                    
+                    general_h[x][x] = specific_h[x]                
+                else:                    
+                    general_h[x][x] = '?'        
+        
+        print("Specific Bundary after ", i+1, "Instance is ", specific_h)         
+        print("Generic Boundary after ", i+1, "Instance is ", general_h)
+        print("\n")
